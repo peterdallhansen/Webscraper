@@ -66,7 +66,10 @@ def download_jpg(imgurl, file_path, file_name):
 		f.write(var.content)
 
 
-
+cwd = os.getcwd()
+if not os.path.exists(cwd + "/images"):
+	os.makedirs(cwd +"/images")
+	print("Created Directory " + cwd +"/images")
 
 
 
@@ -77,11 +80,11 @@ for image in images:
 	print(image['src'])
 	
 	download_jpg("https://lectio.dk" + image['src'], path ,  str(n))
-	img = cv2.imread("C:/Users/peter/source/repos/Webscraper/Webscraper/images/" + str(n) + ".jpg")
+	img = cv2.imread("images/" + str(n) + ".jpg")
 	imgResized = cv2.resize(img, (400,400))
 	imgCropped = imgResized[35:60,150:250]
-	cv2.imwrite("C:/Users/peter/source/repos/Webscraper/Webscraper/images/" + str(n) +  "cropped.jpg", imgCropped)
-	img = cv2.imread("C:/Users/peter/source/repos/Webscraper/Webscraper/images/" + str(n) + "cropped.jpg")
+	cv2.imwrite("images/" + str(n) +  "cropped.jpg", imgCropped)
+	img = cv2.imread("images/" + str(n) + "cropped.jpg")
 
 	def create_bar(height, width, color):
 		bar =np.zeros((height,width,3),np.uint8)
@@ -110,12 +113,12 @@ for image in images:
 		bar, rgb = create_bar(200,200,row)
 		bars.append(bar)
 		rgb_values.append(rgb)
-	img = cv2.imread("C:/Users/peter/source/repos/Webscraper/Webscraper/images/" + str(n) + ".jpg")
+	img = cv2.imread("images/" + str(n) + ".jpg")
 	for index, row in enumerate(rgb_values):
 		if(rgb[0] + rgb[1] + rgb[2] > 300):
-			cv2.imwrite("C:/Users/peter/source/repos/Webscraper/Webscraper/images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
+			cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
 		else:
-			cv2.imwrite("C:/Users/peter/source/repos/Webscraper/Webscraper/images/Results/" + "Brunette_" + str(n) + ".jpg", img)
+			cv2.imwrite("images/Results/" + "Brunette_" + str(n) + ".jpg", img)
 			
 
 	img_bar = np.hstack(bars)
