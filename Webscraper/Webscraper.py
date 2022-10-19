@@ -154,5 +154,5 @@ print("Starting Color Sorting...")
 
 
 	
-os.startfile("images/")
+os.startfile("images")
 cv2.waitKey(0)
