@@ -71,6 +71,10 @@ if not os.path.exists(cwd + "/images"):
 	os.makedirs(cwd +"/images")
 	print("Created Directory " + cwd +"/images")
 
+if not os.path.exists(cwd + "/images/Results"):
+	os.makedirs(cwd +"/images/Results")
+	print("Created Directory " + cwd +"/images/Results")
+
 
 
 
