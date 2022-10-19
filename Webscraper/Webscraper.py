@@ -10,6 +10,8 @@ print("Username:")
 user_ = input()
 print("Password:")
 pass_ = input()
+print("Dominant Color Windows?(Y/N)")
+dom = input()
 payload = {
     
 	'time': '0',
@@ -28,7 +30,7 @@ payload = {
 }
 
 n = 0
-path = "C:/Users/peter/source/repos/Webscraper/Webscraper/images/"
+path = "images/"
 
 
 print("Establishing Connection to server...")
@@ -126,16 +128,18 @@ for image in images:
 			
 
 	img_bar = np.hstack(bars)
-	#cv2.imshow('Dominant colors' + str(n), img_bar)
+	if(dom == "Y"):
+		cv2.imshow('Dominant colors' + str(n), img_bar)
 	
 	
 	
 	
+
 
 
 
 		
-	
+
 
 	
 print("Download complete")
@@ -150,5 +154,5 @@ print("Starting Color Sorting...")
 
 
 	
-os.startfile("C:/Users/peter/source/repos/Webscraper/Webscraper/images/")
+os.startfile("images/")
 cv2.waitKey(0)
