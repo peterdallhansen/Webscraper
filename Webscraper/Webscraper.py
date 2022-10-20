@@ -4,7 +4,7 @@ import re
 import cv2
 import os
 import numpy as np
-
+from math import sqrt
 
 # Script Created by peterdallhansen 2022 github.com/peterdallhansen
 # Uses the dominant colors of the image
@@ -15,6 +15,29 @@ import numpy as np
 def start():
 
 
+	classurl = [
+		
+		"https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857758048%26showstudents%3d1",
+		"https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857770414%26showstudents%3d1",
+		"https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857778621%26showstudents%3d1",
+		"https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857818535%26showstudents%3d1",
+		"https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857861596%26showstudents%3d1"
+
+
+		]
+	
+
+
+	COLORS = (
+		(110, 44, 0 ),
+		(248, 196, 113)
+		
+		
+		
+		)
+
+
+
 	print("Lectio.dk login credentials")
 
 	print("Username:")
@@ -22,6 +45,17 @@ def start():
 	print("Password:")
 	pass_ = input()
 	
+	def classid_input(message):
+		try:
+			id = int(input(message))
+			return id
+		except:
+			return classid_input("enter a number: \n")
+
+	classid = classid_input("Select Class: (0-" + str(len(classurl) - 1) + ") \n")
+	
+	if((classid < 0) or (classid > len(classurl) - 1)):
+		classid = classid_input("Select Class: (0-" + str(len(classurl)) + ") \n")
 	payload = {
     
 		'time': '0',
@@ -38,14 +72,30 @@ def start():
 	
 		'LectioPostbackId': ''
 	}
+	
 
 	n = 0
 	path = "images/"
 
 
+	
+		
+	def closest_color(rgb):
+		r, g, b = rgb
+		color_diffs = []
+		for color in COLORS:
+			cr, cg, cb = color
+			color_diff = sqrt((r - cr)**2 + (g - cg)**2 + (b - cb)**2)
+			color_diffs.append((color_diff, color))
+		return min(color_diffs)[1]
+
+		
+		
+		
+
 	print("Establishing Connection to server...")
 	#Login to Lectio Server
-	url = 'https://www.lectio.dk/lectio/31/login.aspx?prevurl=subnav%2fmembers.aspx%3fklasseid%3d45857878259%26showstudents%3d1'
+	url = classurl[classid]
 	s = requests.Session()
 	r = s.post(url, payload)
 	r.raise_for_status()
@@ -117,7 +167,7 @@ def start():
 		compactsness, labels, centers = cv2.kmeans(data, number_clusters, None, criteria, 10, flags)
 
 	
-
+		print(centers)
 
 
 		bars = []
@@ -159,11 +209,16 @@ def start():
 
 	print("Program ended succesfully \nOpening \images\ in file explorer")
 
-
+	
 
 
 	
 	os.startfile("images")
 	cv2.waitKey(0)
+
+	print("r to restart")
+	RESTART = input()
+	if(RESTART == 'r'):
+		start()
 
 start()
