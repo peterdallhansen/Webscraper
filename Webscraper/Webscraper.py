@@ -5,6 +5,9 @@ import cv2
 import os
 import numpy as np
 from math import sqrt
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+import imghdr
 
 # Script Created by peterdallhansen 2022 github.com/peterdallhansen
 # Uses the dominant colors of the image
@@ -117,7 +120,8 @@ def start():
 	print("Dominant Color Windows?(Y/N)")
 	dom = input()
 
-
+	print("Use Machine Learning Model For Detection (Longer wait time) (Y/N)")
+	mLearn = input()
 
 	#Download images to folder
 	def download_jpg(imgurl, file_path, file_name):
@@ -127,16 +131,26 @@ def start():
 			f.write(var.content)
 
 
+	#Create directory
 	cwd = os.getcwd()
-	if not os.path.exists(cwd + "images"):
-		os.makedirs(cwd +"images")
-		print("Created Directory " + cwd +"images")
+	if not os.path.exists(cwd + "/images"):
+		try:
+			os.makedirs(cwd +"/images")
+		except OSError:
+			print("Creation of the directory %s failed " % cwd + "/images")
+		print("Created Directory " + cwd +"/images")
 
-	if not os.path.exists(cwd + "images/Results"):
-		os.makedirs(cwd +"images/Results")
-		print("Created Directory " + cwd +"images/Results")
-
-
+	if not os.path.exists(cwd + "/images/Results"):
+		try:
+			os.makedirs(cwd +"/images/Results")
+		except OSError:
+			print("Creation of the directory %s failed " % cwd + "/images/Results")
+				
+		print("Created Directory " + cwd +"/images/Results")
+  
+	
+	if os.path.exists(cwd + "/images/Results"):
+		print("Directory Found")
 
 
 
@@ -172,7 +186,7 @@ def start():
 
 		bars = []
 		rgb_values = []
-
+		
 
 		for index, row in enumerate(centers):
 			bar, rgb = create_bar(200,200,row)
@@ -181,19 +195,40 @@ def start():
 		img = cv2.imread("images/" + str(n) + ".jpg")
 	
 		#Sorts based on sum of rgb values
-		for index, row in enumerate(rgb_values):
-			if(rgb[0] + rgb[1] + rgb[2] > 300):
-				cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
+
+		if(mLearn == "Y"):
+
+			img = cv2.imread("images/" + str(n) + ".jpg")
+			resize = tf.image.resize(img, (256,256))
+
+			new_model = load_model('models/imageclassifier.h5')
+			yhat = new_model.predict(np.expand_dims(resize/255, 0))
+
+			if yhat < 0.5: 
+				 cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
 			else:
 				cv2.imwrite("images/Results/" + "Brunette_" + str(n) + ".jpg", img)
+		elif(mLearn != "Y"):
+
+			for index, row in enumerate(rgb_values):
+				if(rgb[0] + rgb[1] + rgb[2] > 300):
+					cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
+				else:
+					cv2.imwrite("images/Results/" + "Brunette_" + str(n) + ".jpg", img)
 			
-		img_bar = np.hstack(bars)
+			img_bar = np.hstack(bars)
 		if(dom == "Y"):
 			cv2.imshow('Dominant colors' + str(n), img_bar)
 	
 	
-	
-	
+	#possible better sorting
+
+	#for index, row in enumerate(rgb_values):
+	#		if(closest_color((rgb[0],rgb[1],rgb[2])) == (248, 196, 113)):
+	#			cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
+	#		else:
+	#			cv2.imwrite("images/Results/" + "Brunette_" + str(n) + ".jpg", img)
+			
 
 
 
@@ -210,7 +245,7 @@ def start():
 	print("Program ended succesfully \nOpening \images\ in file explorer")
 
 	
-
+	
 
 	
 	os.startfile("images")

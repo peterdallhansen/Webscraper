@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Webscraper", "Webscraper\Webscraper.pyproj", "{032B0985-DA76-4742-B7A6-991BDB2A16AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{74276AA0-31F0-48AD-BF00-FD5C85606281}"
-	ProjectSection(SolutionItems) = preProject
-		login.html = login.html
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
