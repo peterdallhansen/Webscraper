@@ -5,15 +5,21 @@ import cv2
 import os
 import numpy as np
 from math import sqrt
+
 import tensorflow as tf
+tf.get_logger().setLevel('INFO')
 from tensorflow.keras.models import load_model
-import imghdr
+from keras.engine.training import Model
+import numpy as np
+
+
+
 
 # Script Created by peterdallhansen 2022 github.com/peterdallhansen
 # Uses the dominant colors of the image
 # To determine the hair color
+# Using tensorflow image classification - https://www.tensorflow.org/	
 
-#pip install opencv-python
 
 def start():
 
@@ -38,7 +44,7 @@ def start():
 		
 		
 		)
-
+	class_names = ['blonde', 'brunette', 'gingers']
 
 
 	print("Lectio.dk login credentials")
@@ -79,7 +85,8 @@ def start():
 
 	n = 0
 	path = "images/"
-
+	img_height = 180
+	img_width = 180
 
 	
 		
@@ -120,7 +127,7 @@ def start():
 	print("Dominant Color Windows?(Y/N)")
 	dom = input()
 
-	print("Use Machine Learning Model For Detection (Longer wait time) (Y/N)")
+	print("Use Deep Learning Algorithm (Longer wait time) (Y/N)")
 	mLearn = input()
 
 	#Download images to folder
@@ -198,16 +205,26 @@ def start():
 
 		if(mLearn == "Y"):
 
-			img = cv2.imread("images/" + str(n) + ".jpg")
-			resize = tf.image.resize(img, (256,256))
+			MImg = tf.keras.utils.load_img(
+			"images/" + str(n) + ".jpg", target_size=(img_height, img_width)
+)
+			img_array = tf.keras.utils.img_to_array(MImg)
+			img_array = tf.expand_dims(img_array, 0)
 
-			new_model = load_model('models/imageclassifier.h5')
-			yhat = new_model.predict(np.expand_dims(resize/255, 0))
-
-			if yhat < 0.5: 
+			new_model = load_model('models/trainedmodel6.h5')
+			predictions = new_model.predict(img_array)
+			score = tf.nn.softmax(predictions[0])
+			print(score)
+			if class_names[np.argmax(score)] == 'blonde': 
 				 cv2.imwrite("images/Results/" + "Blonde_"+ str(n) + ".jpg", img)
-			else:
+				 print("Blonde")
+			elif class_names[np.argmax(score)] == 'brunette':
 				cv2.imwrite("images/Results/" + "Brunette_" + str(n) + ".jpg", img)
+				print("Brunette")
+			elif class_names[np.argmax(score)] == 'gingers':
+				cv2.imwrite("images/Results/" + "Ginger_" + str(n) + ".jpg", img)
+				print("Ginger")
+
 		elif(mLearn != "Y"):
 
 			for index, row in enumerate(rgb_values):
